@@ -17,28 +17,17 @@
     path: "{{ solr_install_path }}"
   register: solr_install_path_status
 
-- name: Download Solr.
-  get_url:
-    url: "{{ solr_mirror }}/lucene/solr/{{ solr_version }}/{{ solr_filename }}.tgz"
-    dest: "{{ solr_workspace }}/{{ solr_filename }}.tgz"
-    force: no
+# Download
+- include: download.yml
   when: solr_install_path_status.stat.isdir is not defined
-  register: solr_download_status
-
-- name: Expand Solr.
-  unarchive:
-    src: "{{ solr_workspace }}/{{ solr_filename }}.tgz"
-    dest: "{{ solr_workspace }}"
-    copy: no
-  when: solr_download_status.changed
 
 # Install Solr < 5.
 - include: install-pre5.yml
-  when: "solr_version.split('.')[0] < '5'"
+  when: solr_version.split('.')[0] < '5' and solr_install_path_status.stat.isdir is not defined
 
 # Install Solr 5+.
 - include: install.yml
-  when: "solr_version.split('.')[0] >= '5'"
+  when: solr_version.split('.')[0] >= '5' and solr_install_path_status.stat.isdir is not defined
 
 - name: Ensure solr is started and enabled on boot if configured.
   service:

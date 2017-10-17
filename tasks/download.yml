@@ -1,0 +1,41 @@
+---
+- name: Check for silpion libraries.
+  local_action: stat
+  args:
+    path: "{{ role_path }}/../silpion.lib/tasks"
+  run_once: true
+  register: silpion_lib
+
+- name: Create silpion datapersistency directories.
+  include: "{{ role_path }}/../silpion.lib/tasks/datapersistency.yml"
+  when: silpion_lib.stat.exists
+
+- name: Download Solr locallyi '{{ solr_version }}/{{ solr_filename }}.tgz'.
+  include: "{{ role_path }}/../silpion.lib/tasks/get_url.yml"
+  when: silpion_lib.stat.exists
+  vars:
+    url: "{{ solr_mirror }}/lucene/solr/{{ solr_version }}/{{ solr_filename }}.tgz"
+    filename: "{{ solr_filename }}.tgz"
+  run_once: true
+
+- name: Copy Solr to host.
+  include: "{{ role_path }}/../silpion.lib/tasks/copy.yml"
+  when: silpion_lib.stat.exists
+  register: solr_download_status
+  vars:
+    filename: "{{ solr_filename }}.tgz"
+
+- name: Download Solr.
+  get_url:
+    url: "{{ solr_mirror }}/lucene/solr/{{ solr_version }}/{{ solr_filename }}.tgz"
+    dest: "{{ solr_workspace }}/{{ solr_filename }}.tgz"
+    force: no
+  when: solr_install_path_status.stat.isdir is not defined and not silpion_lib.stat.exists
+  register: solr_download_status
+
+- name: Expand Solr.
+  unarchive:
+    src: "{{ lib_persistent_data_path_remote if silpion_lib.stat.exists else solr_workspace }}/{{ solr_filename }}.tgz"
+    dest: "{{ solr_workspace }}"
+    copy: no
+    creates: "{{ solr_workspace }}/{{ solr_filename }}/bin/install_solr_service.sh"

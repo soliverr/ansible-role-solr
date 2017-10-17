@@ -9,7 +9,7 @@
 - name: Run Solr installation script.
   shell: >
     {{ solr_workspace }}/{{ solr_filename }}/bin/install_solr_service.sh
-    {{ solr_workspace }}/{{ solr_filename }}.tgz
+    {{ lib_persistent_data_path_remote if silpion_lib.stat.exists else solr_workspace }}/{{ solr_filename }}.tgz
     -i {{ solr_install_dir }}
     -d {{ solr_home }}
     -u {{ solr_user }}
