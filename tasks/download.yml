@@ -10,7 +10,7 @@
   include: "{{ role_path }}/../silpion.lib/tasks/datapersistency.yml"
   when: silpion_lib.stat.exists
 
-- name: Download Solr locallyi '{{ solr_version }}/{{ solr_filename }}.tgz'.
+- name: Download Solr locally '{{ solr_version }}/{{ solr_filename }}.tgz'.
   include: "{{ role_path }}/../silpion.lib/tasks/get_url.yml"
   when: silpion_lib.stat.exists
   vars:
