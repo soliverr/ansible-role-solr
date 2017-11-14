@@ -3,7 +3,6 @@
   local_action: stat
   args:
     path: "{{ role_path }}/../silpion.lib/tasks"
-  run_once: true
   register: silpion_lib
 
 - name: Create silpion datapersistency directories.
