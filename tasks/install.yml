@@ -18,6 +18,13 @@
     creates={{ solr_install_path }}/bin/solr
   register: solr_install_script_result
 
+- name: Ensure Solr HOME is owned by the solr_user.
+  file:
+    path: "{{ solr_home }}"
+    owner: "{{ solr_user }}"
+    group: "{{ solr_group }}"
+    recurse: yes
+
 # Workaround for bug https://github.com/ansible/ansible-modules-core/issues/915.
 - name: Ensure solr is stopped (RHEL 7 workaround).
   command: service {{ solr_service_name }} stop
