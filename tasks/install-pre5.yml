@@ -30,6 +30,7 @@
     mode: 0755
   when: not solr_example.stat.exists
 
+# FIXME: may be this task should be done as become {{solr_user}}
 - name: Copy Solr example into solr_home.
   shell: "cp -r {{ solr_install_path }}/example/solr/* {{ solr_home }}"
   when: not solr_example.stat.exists
@@ -41,6 +42,7 @@
     replace: ""
   when: "not solr_example.stat.exists and solr_version.split('.')[0] == '4'"
 
+# FIXME: see above task
 - name: Ensure Solr home files are owned by the solr_user.
   file:
     path: "{{ solr_home }}"

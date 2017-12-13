@@ -18,7 +18,8 @@
     creates={{ solr_install_path }}/bin/solr
   register: solr_install_script_result
 
-- name: Ensure Solr HOME is owned by the solr_user.
+#FIXME: need to check permissions on pristine installation
+- name: Fixup SOLR HOME permission
   file:
     path: "{{ solr_home }}"
     owner: "{{ solr_user }}"
